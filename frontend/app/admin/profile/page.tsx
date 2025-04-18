@@ -6,7 +6,7 @@ import { LogOut, User, ShieldCheck, Settings, Key } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 
 // Mock admin data - in a real app, this would come from your backend
 const adminData = {
@@ -18,14 +18,10 @@ const adminData = {
 }
 
 export default function AdminProfile() {
-  const { toast } = useToast()
 
   const handleLogout = () => {
     // In a real app, you would handle logout logic here
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    })
+    toast.success("You have been successfully logged out.")
     window.location.href = "/"
   }
 

@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { electionService } from "@/lib/api"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -47,7 +47,6 @@ interface Election {
 
 export default function VotePage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { toast } = useToast()
   const [election, setElection] = useState<Election | null>(null)
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null)
   const [isVoting, setIsVoting] = useState(false)
@@ -68,16 +67,12 @@ export default function VotePage({ params }: { params: { id: string } }) {
         }
       } catch (error) {
         console.error('Error fetching election:', error)
-        toast({
-          title: "Error",
-          description: "Failed to fetch election details",
-          variant: "destructive",
-        })
+        toast.error("Failed to fetch election details")
       }
     }
 
     fetchElection()
-  }, [params.id, toast])
+  }, [params.id])
 
   const handleCandidateSelect = (candidateId: string) => {
     // If clicking the same candidate, deselect it
@@ -97,19 +92,12 @@ export default function VotePage({ params }: { params: { id: string } }) {
         electionId: params.id,
         candidateId: selectedCandidate
       })
-      toast({
-        title: "Vote Cast Successfully",
-        description: "Your vote has been recorded.",
-      })
+      toast.success("our vote has been recorded.");
       setHasVoted(true)
       router.push("/voter/dashboard")
     } catch (error) {
       console.error('Error casting vote:', error)
-      toast({
-        title: "Vote Failed",
-        description: error instanceof Error ? error.message : "Failed to cast vote",
-        variant: "destructive",
-      })
+      toast.error(error instanceof Error ? error.message : "Failed to cast vote");
     } finally {
       setIsVoting(false)
     }

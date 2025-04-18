@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+import {toast} from "react-toastify"
 import { electionService } from "@/lib/api"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -40,7 +40,6 @@ interface Election {
 
 export default function ElectionDetailsPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { toast } = useToast()
   const [election, setElection] = useState<Election | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -51,18 +50,14 @@ export default function ElectionDetailsPage({ params }: { params: { id: string }
         const data = await electionService.getElectionById(params.id)
         setElection(data)
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch election details.",
-          variant: "destructive",
-        })
+        toast.error("Failed to fetch election details.")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchElection()
-  }, [params.id, toast])
+  }, [params.id])
 
   const handleDelete = async () => {
     if (!election) return
@@ -70,17 +65,10 @@ export default function ElectionDetailsPage({ params }: { params: { id: string }
     setIsDeleting(true)
     try {
       await electionService.deleteElection(params.id)
-      toast({
-        title: "Success",
-        description: "Election deleted successfully.",
-      })
+      toast.success("Election deleted successfully.")
       router.push("/admin/dashboard")
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete election.",
-        variant: "destructive",
-      })
+      toast.error("Failed to delete election.")
     } finally {
       setIsDeleting(false)
     }
@@ -91,17 +79,10 @@ export default function ElectionDetailsPage({ params }: { params: { id: string }
 
     try {
       await electionService.startElection(params.id)
-      toast({
-        title: "Success",
-        description: "Election started successfully.",
-      })
+      toast.success("Election started successfully.")
       router.refresh()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to start election.",
-        variant: "destructive",
-      })
+      toast.error("Failed to start election.")
     }
   }
 
@@ -111,26 +92,16 @@ export default function ElectionDetailsPage({ params }: { params: { id: string }
     try {
       await electionService.endElection(params.id)
       setElection(prev => prev ? { ...prev, status: 'ended' } : null)
-      toast({
-        title: "Success",
-        description: "Election ended successfully.",
-      })
+      toast.success("Election ended successfully.")
       router.refresh()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to end election.",
-        variant: "destructive",
-      })
+      toast.error("Failed to end election.")
     }
   }
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    })
+    toast.success("You have been successfully logged out.");
     window.location.href = "/"
   }
 

@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useToast } from "@/hooks/use-toast"
+import {toast} from 'react-toastify';
 import { authService } from "@/lib/api"
 
 export default function LoginPage() {
@@ -24,7 +24,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,11 +34,7 @@ export default function LoginPage() {
       
       // Check if the user's role matches the selected role
       if (response.user.role !== role) {
-        toast({
-          title: "Role mismatch",
-          description: `Please login as a ${response.user.role} to access this dashboard.`,
-          variant: "destructive",
-        })
+        toast.error(`Please login as a ${response.user.role} to access this dashboard.`)
         setIsLoading(false)
         return
       }
@@ -48,10 +43,8 @@ export default function LoginPage() {
       localStorage.setItem('token', response.token)
       localStorage.setItem('user', JSON.stringify(response.user))
 
-      toast({
-        title: "Login successful",
-        description: `Welcome back! You are now logged in as a ${role}.`,
-      })
+      toast.success(`Welcome back! You are now logged in as a ${role}.`)
+
 
       if (role === "admin") {
         router.push("/admin/dashboard")
@@ -59,11 +52,7 @@ export default function LoginPage() {
         router.push("/voter/dashboard")
       }
     } catch (error: any) {
-      toast({
-        title: "Login Failed",
-        description: error.response?.data?.message || "An error occurred during login",
-        variant: "destructive",
-      })
+      toast.error(error.response?.data?.message || "An error occurred during login")
     } finally {
       setIsLoading(false)
     }

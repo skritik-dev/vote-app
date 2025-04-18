@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { authService } from "@/lib/api"
 
 export default function SignupPage() {
@@ -26,18 +26,13 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
     if (password !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match.",
-        variant: "destructive",
-      })
+      toast.error("Please make sure your passwords match.")
       setIsLoading(false)
       return
     }
@@ -47,11 +42,7 @@ export default function SignupPage() {
       
       // Check if the user's role matches the selected role
       if (response.user.role !== role) {
-        toast({
-          title: "Role mismatch",
-          description: `Your account was created as a ${response.user.role}. Please login with the correct role.`,
-          variant: "destructive",
-        })
+        toast.error(`Your account was created as a ${response.user.role}. Please login with the correct role.`)
         setIsLoading(false)
         return
       }
@@ -68,11 +59,7 @@ export default function SignupPage() {
         router.push("/voter/dashboard")
       }
     } catch (error: any) {
-      toast({
-        title: "Registration failed",
-        description: error.response?.data?.message || "An error occurred during registration",
-        variant: "destructive",
-      })
+      toast.error(error.response?.data?.message || "An error occurred during registration")
     } finally {
       setIsLoading(false)
     }

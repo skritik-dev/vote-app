@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { electionService } from "@/lib/api"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -29,7 +29,6 @@ export default function AdminDashboard() {
   const [elections, setElections] = useState<Election[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { toast } = useToast()
 
   useEffect(() => {
     const fetchElections = async () => {
@@ -42,25 +41,18 @@ export default function AdminDashboard() {
       } catch (error: any) {
         console.error('Error in fetchElections:', error)
         setError(error.message || 'Failed to fetch elections')
-        toast({
-          title: "Error",
-          description: error.message || "Failed to fetch elections",
-          variant: "destructive"
-        })
+        toast.error(error.message || "Failed to fetch elections")
       } finally {
         setLoading(false)
       }
     }
 
     fetchElections()
-  }, [toast])
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    })
+    toast.success("You have been successfully logged out.")
     window.location.href = "/"
   }
 

@@ -6,7 +6,7 @@ import { CalendarIcon, LogOut, ShieldCheck, User, Eye, BarChart2 } from "lucide-
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 
 // Mock data for voter profile
 const voterProfile = {
@@ -36,14 +36,10 @@ const votingHistory = [
 ]
 
 export default function VoterProfile() {
-  const { toast } = useToast()
 
   const handleLogout = () => {
     // In a real app, you would handle logout logic here
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    })
+    toast.success("You have been successfully logged out.")
     window.location.href = "/"
   }
 

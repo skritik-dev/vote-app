@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { useToast } from "@/hooks/use-toast"
+import{ toast } from 'react-toastify'
 import { electionService } from "@/lib/api"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -52,7 +52,6 @@ interface VoteResult {
 
 export default function ElectionResultsPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { toast } = useToast()
   const [election, setElection] = useState<Election | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -62,11 +61,7 @@ export default function ElectionResultsPage({ params }: { params: { id: string }
         const electionData = await electionService.getElectionById(params.id)
         
         if (electionData.status !== 'ended') {
-          toast({
-            title: "Results Not Available",
-            description: "Election results will be available after the election has ended.",
-            variant: "destructive",
-          })
+          toast.error("Election results will be available after the election has ended.")
           router.push("/voter/dashboard")
           return
         }
@@ -98,18 +93,14 @@ export default function ElectionResultsPage({ params }: { params: { id: string }
         }
       } catch (error) {
         console.error('Error fetching election results:', error)
-        toast({
-          title: "Error",
-          description: "Failed to fetch election results. Please try again later.",
-          variant: "destructive",
-        })
+        toast.error("Failed to fetch election results. Please try again later.");
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchElection()
-  }, [params.id, router, toast])
+  }, [params.id, router])
 
   if (isLoading) {
     return (

@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
+import {toast} from "react-toastify"
 import { electionService } from "@/lib/api"
 
 interface Election {
@@ -38,7 +38,6 @@ interface Election {
 
 export default function EditElectionPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const { toast } = useToast()
   const [election, setElection] = useState<Election>({
     _id: "",
     name: "",
@@ -57,21 +56,13 @@ export default function EditElectionPage({ params }: { params: { id: string } })
       try {
         const data = await electionService.getElectionById(params.id)
         if (data.status !== 'upcoming') {
-          toast({
-            title: "Cannot edit election",
-            description: "Only upcoming elections can be edited.",
-            variant: "destructive",
-          })
+          toast.error("Only upcoming elections can be edited.")
           router.push(`/admin/elections/${params.id}`)
           return
         }
         setElection(data)
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch election details.",
-          variant: "destructive",
-        })
+        toast.error("Failed to fetch election details.")
         router.push("/admin/dashboard")
       } finally {
         setIsLoading(false)
@@ -79,7 +70,7 @@ export default function EditElectionPage({ params }: { params: { id: string } })
     }
 
     fetchElection()
-  }, [params.id, router, toast])
+  }, [params.id, router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -92,17 +83,10 @@ export default function EditElectionPage({ params }: { params: { id: string } })
 
     try {
       await electionService.updateElection(params.id, election)
-      toast({
-        title: "Success",
-        description: "Election updated successfully.",
-      })
+      toast.success("Election updated successfully.")
       router.push(`/admin/elections/${params.id}`)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update election.",
-        variant: "destructive",
-      })
+      toast.error("Failed to update election.")
     } finally {
       setIsLoading(false)
     }

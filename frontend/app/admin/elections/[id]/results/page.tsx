@@ -5,7 +5,7 @@ import { ArrowLeft, Download, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
+import {toast} from "react-toastify"
 
 // Mock election results data
 const electionData = {
@@ -24,13 +24,9 @@ const electionData = {
 }
 
 export default function ElectionResultsPage({ params }: { params: { id: string } }) {
-  const { toast } = useToast()
 
   const handleDownloadResults = () => {
-    toast({
-      title: "Results downloaded",
-      description: "Election results have been downloaded as CSV.",
-    })
+    toast.success("Election results have been downloaded as CSV.")
   }
 
   // Calculate percentages and find the winner

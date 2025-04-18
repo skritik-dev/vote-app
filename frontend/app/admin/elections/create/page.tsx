@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
@@ -28,7 +28,6 @@ interface Candidate {
 
 export default function CreateElectionPage() {
   const router = useRouter()
-  const { toast } = useToast()
   const [electionName, setElectionName] = useState("")
   const [description, setDescription] = useState("")
   const [startDateTime, setStartDateTime] = useState("")
@@ -46,11 +45,7 @@ export default function CreateElectionPage() {
 
   const handleRemoveCandidate = (index: number) => {
     if (candidates.length <= 2) {
-      toast({
-        title: "Cannot remove candidate",
-        description: "You need at least two candidates for an election.",
-        variant: "destructive",
-      })
+      toast.error("You need at least two candidates for an election.")
       return
     }
     setCandidates(candidates.filter((_, i) => i !== index))
@@ -67,11 +62,7 @@ export default function CreateElectionPage() {
 
     // Validate form
     if (!electionName || !description || !startDateTime || !endDateTime) {
-      toast({
-        title: "Missing information",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      })
+      toast.error("Please fill in all required fields.")
       return
     }
 
@@ -79,21 +70,13 @@ export default function CreateElectionPage() {
     const end = new Date(endDateTime)
 
     if (start >= end) {
-      toast({
-        title: "Invalid date range",
-        description: "End date and time must be after start date and time.",
-        variant: "destructive",
-      })
+      toast.error("End date and time must be after start date and time.")
       return
     }
 
     const invalidCandidates = candidates.some((candidate) => !candidate.name)
     if (invalidCandidates) {
-      toast({
-        title: "Invalid candidates",
-        description: "All candidates must have a name.",
-        variant: "destructive",
-      })
+      toast.error("All candidates must have a name.")
       return
     }
 
@@ -116,18 +99,10 @@ export default function CreateElectionPage() {
 
       // Submit to backend
       await electionService.createElection(electionData)
-
-      toast({
-        title: "Election created",
-        description: "Your election has been created successfully.",
-      })
+      toast.success("Your election has been created successfully.")
       router.push("/admin/dashboard")
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create election. Please try again.",
-        variant: "destructive",
-      })
+      toast.error("Failed to create election. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
